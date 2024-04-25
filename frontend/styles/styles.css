@@ -136,7 +136,9 @@ button#reset {
   height: 80%;
   border-radius: 50%;
   grid-area: reset;
+  font-size: 0.8rem; /* Adjusting font size smaller */
 }
+
 
 button#left {
   grid-area: left;
@@ -172,6 +174,13 @@ input:active {
   box-shadow: 0 0 5px #93005a;
   border: 1px solid #93005a;
 }
+
+#error-message {
+  color: #00808c; /* Blue color */
+  font-size: 1.2rem; /* Larger text size */
+  font-style: italic; /* Italicized text */
+}
+
 
 footer {
   margin-top: 2rem;
