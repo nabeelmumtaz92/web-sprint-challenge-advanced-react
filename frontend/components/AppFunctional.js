@@ -1,24 +1,44 @@
 import React, { useState } from 'react';
 
 const AppFunctional = () => {
-  const [index, setIndex] = useState(4);  // Start from the center of the grid
+  const [index, setIndex] = useState(4); // Initialize at the center of the grid (index 4)
   const [email, setEmail] = useState('');
   const [steps, setSteps] = useState(0);
   const [message, setMessage] = useState('');
 
-  const handleMove = (newIndex) => {
-    if (newIndex < 0 || newIndex > 8) {
-      setMessage("You can't move outside the grid boundaries.");
-      return; // Prevent moving outside the grid
+  // Function to handle movement based on direction
+  const handleMove = (direction) => {
+    let newIndex = index;
+    const row = Math.floor(index / 3);
+    const col = index % 3;
+
+    switch (direction) {
+      case 'up':
+        if (row > 0) newIndex -= 3;
+        break;
+      case 'down':
+        if (row < 2) newIndex += 3;
+        break;
+      case 'left':
+        if (col > 0) newIndex -= 1;
+        break;
+      case 'right':
+        if (col < 2) newIndex += 1;
+        break;
+      default:
+        break;
     }
 
     if (newIndex !== index) {
       setIndex(newIndex);
       setSteps(steps + 1);
-      setMessage(''); // Clear any existing messages on valid move
+      setMessage(''); // Clear message on successful move
+    } else {
+      setMessage(`You can't go ${direction}`); // Set message if move is not possible
     }
   };
 
+  // Reset function to clear all states
   const handleReset = () => {
     setIndex(4);
     setEmail('');
@@ -26,26 +46,24 @@ const AppFunctional = () => {
     setMessage('');
   };
 
-  const handleSubmit = async (event) => {
+  // Handle form submission
+  const handleSubmit = (event) => {
     event.preventDefault();
     const x = (index % 3) + 1;
     const y = Math.floor(index / 3) + 1;
 
-    try {
-      const response = await fetch('http://localhost:9000/api/result', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ x, y, steps, email })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setMessage(`Success: ${data.message}`);
-      } else {
-        setMessage(`Error: ${data.message}`);
-      }
-    } catch (error) {
+    fetch('http://localhost:9000/api/result', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ x, y, steps, email })
+    })
+    .then(response => response.json())
+    .then(data => {
+      setMessage(response.ok ? `Success: ${data.message}` : `Error: ${data.message}`);
+    })
+    .catch(error => {
       setMessage(`Network error: ${error.toString()}`);
-    }
+    });
   };
 
   return (
