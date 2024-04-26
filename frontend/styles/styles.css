@@ -175,13 +175,6 @@ input:active {
   border: 1px solid #93005a;
 }
 
-#error-message {
-  color: #00808c; /* Blue color */
-  font-size: 1.2rem; /* Larger text size */
-  font-style: italic; /* Italicized text */
-}
-
-
 footer {
   margin-top: 2rem;
   line-height: 2rem;

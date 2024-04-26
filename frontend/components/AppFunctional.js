@@ -45,31 +45,34 @@ const AppFunctional = ({ className }) => {
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        const { x, y } = getCoordinates();
-
-        try {
-            const response = await fetch('http://localhost:9000/api/result', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ x, y, steps, email })
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.message);
-            }
-            setErrorMessage(`Success: ${data.message}`);
-        } catch (error) {
-            setErrorMessage(`Error: ${error.message}`);
-        }
-    };
+      event.preventDefault();
+      const { x, y } = getCoordinates();
+  
+      try {
+          const response = await fetch('http://localhost:9000/api/result', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ x, y, steps, email })
+          });
+          const data = await response.json();
+          if (!response.ok) {
+              throw new Error(data.message);
+          }
+          setErrorMessage(`Success: ${data.message}`);
+          setEmail(''); // Reset email after successful submission
+      } catch (error) {
+          setErrorMessage(`Error: ${error.message}`);
+      }
+  };
+  
 
     return (
         <div id="wrapper" className={className}>
-            <div className="info">
-                <h3 id="coordinates">Coordinates ({getCoordinates().x}, {getCoordinates().y})</h3>
-                <h3 id="steps">You moved {steps} times</h3>
-            </div>
+        <div className="info">
+            <h3 id="coordinates">Coordinates ({getCoordinates().x}, {getCoordinates().y})</h3>
+            <h3 id="steps">You moved {steps} {steps === 1 ? 'time' : 'times'}</h3>
+        </div>
+
             <div id="grid">
                 {Array.from({ length: 9 }).map((_, idx) => (
                     <div key={idx} className={`square${index === idx ? ' active' : ''}`} onClick={() => move(idx)}>
@@ -78,7 +81,7 @@ const AppFunctional = ({ className }) => {
                 ))}
             </div>
             <div className="info">
-                <h3 id="error-message" style={{ color: '#00808c' }}>{errorMessage}</h3> 
+                <h3 id="message" style={{ color: '#00808c' }}>{errorMessage}</h3> 
             </div>
             <div id="keypad">
                 <button id="left" onClick={() => move('left')}>LEFT</button>
@@ -88,8 +91,8 @@ const AppFunctional = ({ className }) => {
                 <button id="reset" onClick={reset}>reset</button>
             </div>
             <form onSubmit={handleSubmit}>
-                <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Type email" />
-                <button type="submit">Submit</button>
+              <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Type email" />
+                <button id="submit" type="submit">Submit</button>
             </form>
         </div>
     );
